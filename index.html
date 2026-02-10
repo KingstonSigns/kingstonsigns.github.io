@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Signage Panel Configurator</title>
     <!-- base styles -->
-    <script type="module" crossorigin src="/assets/index-Dk1uVmqa.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Bj9zi1sc.css">
+    <script type="module" crossorigin src="/assets/index-5TNT6VfW.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-fYPYOA-g.css">
   </head>
   <body>
     <!-- app layout -->
@@ -36,6 +36,16 @@
 
         <!-- panel body -->
         <div id="panel-content">
+        <!-- models section -->
+        <div class="section collapsible" data-section="models">
+          <div class="section-header">
+            <div class="section-title">Models</div>
+            <button class="section-toggle" type="button" aria-label="Collapse section">▾</button>
+          </div>
+          <div id="modelList" class="model-list"></div>
+          <div class="hint">Double click a model to select.</div>
+        </div>
+
         <!-- dimensions section -->
         <div class="section collapsible" data-section="dimensions">
           <div class="section-header">
@@ -50,7 +60,7 @@
             <span>Height (in) <em class="note">max. 35 inches</em></span>
             <input id="height" type="number" min="1" max="35" step="0.1" value="10" />
           </label>
-          <label class="field">
+          <label id="depthField" class="field">
             <span>Depth (in) <em class="note">max. 1 inch</em></span>
             <input id="depth" type="number" min="0.1" max="1" step="0.1" value="0.2" />
           </label>
@@ -60,10 +70,10 @@
           </label>
         </div>
 
-        <!-- front image section -->
+        <!-- images section -->
         <div class="section collapsible collapsed" data-section="front-image">
           <div class="section-header">
-            <div class="section-title">Front Image</div>
+            <div class="section-title">Images</div>
             <button class="section-toggle" type="button" aria-label="Collapse section">▾</button>
           </div>
           <div class="field">
@@ -72,7 +82,7 @@
               <!-- add image button is placed below slots -->
             </div>
           </div>
-          <label class="field">
+          <label id="layoutField" class="field">
             <span>Layout</span>
             <select id="imageLayout">
               <option value="horizontal" selected>Side-by-Side</option>
@@ -80,7 +90,7 @@
               <option value="grid">Grid (2x2)</option>
             </select>
           </label>
-          <div class="subsection">
+          <div id="scaleSection" class="subsection">
             <div class="section-title">Scale Proportionally</div>
             <div class="button-row">
               <button id="matchWidth" class="secondary" type="button">Match Width to Image</button>
@@ -252,6 +262,48 @@
             </div>
           </div>
           <div id="imageStatus" class="status">No images loaded</div>
+          <div id="backImageSection" class="subsection">
+            <div class="section-title">Back Image</div>
+            <div class="slot back-slot">
+              <label class="field">
+                <span>Back Image</span>
+                <input id="backImageInput" type="file" accept="image/*" />
+              </label>
+              <button id="backAdvancedToggle" class="secondary toggle-advanced" type="button">Advanced</button>
+              <div id="backAdvancedPanel" class="slot-advanced">
+                <label class="field">
+                  <span>Rotation</span>
+                  <select id="backRotation">
+                    <option value="0">0°</option>
+                    <option value="90">90°</option>
+                    <option value="180">180°</option>
+                    <option value="270">270°</option>
+                    <option value="360">360°</option>
+                  </select>
+                </label>
+                <button id="backMarginsToggle" class="secondary toggle-margins" type="button">Margins</button>
+                <div id="backMarginsPanel" class="slot-margins">
+                  <label class="field">
+                    <span>Left Margin (in)</span>
+                    <input id="backMarginLeft" type="number" min="0" step="0.05" value="0" />
+                  </label>
+                  <label class="field">
+                    <span>Right Margin (in)</span>
+                    <input id="backMarginRight" type="number" min="0" step="0.05" value="0" />
+                  </label>
+                  <label class="field">
+                    <span>Top Margin (in)</span>
+                    <input id="backMarginTop" type="number" min="0" step="0.05" value="0" />
+                  </label>
+                  <label class="field">
+                    <span>Bottom Margin (in)</span>
+                    <input id="backMarginBottom" type="number" min="0" step="0.05" value="0" />
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div id="backImageStatus" class="status">No back image loaded</div>
+          </div>
         </div>
 
         <!-- screwholes section -->
@@ -265,6 +317,41 @@
             <input id="screwholes" type="checkbox" />
           </label>
           <div class="hint">Placed 0.5 in from panel edges.</div>
+        </div>
+
+        <!-- checkout section -->
+        <div class="section collapsible collapsed" data-section="checkout">
+          <div class="section-header">
+            <div class="section-title">Checkout</div>
+            <button class="section-toggle" type="button" aria-label="Collapse section">▾</button>
+          </div>
+          <div class="price-total">
+            <span>Total</span>
+            <span id="priceTotal">£0.00</span>
+          </div>
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Materials</span>
+              <span id="priceMaterials">£0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Labor</span>
+              <span id="priceLabor">£0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Margin</span>
+              <span id="priceMargin">£0.00</span>
+            </div>
+            <div class="price-row">
+              <span>VAT</span>
+              <span id="priceVat">£0.00</span>
+            </div>
+          </div>
+          <div id="priceStatus" class="hint">Quote updates as you edit.</div>
+          <button id="payBtn" class="primary">Create Payment Intent</button>
+          <div id="paymentElement" class="payment-element"></div>
+          <button id="payConfirmBtn" class="primary" type="button" disabled>Confirm Payment</button>
+          <div id="payStatus" class="hint">Stripe intent will be created for the current quote.</div>
         </div>
 
         <!-- export section -->
